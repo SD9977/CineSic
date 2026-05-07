@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineSic</title>
+  <!-- Linking CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Music & Movies Database</h1>
+
+  <!-- Form to add entries -->
+  <form id="entryForm">
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="text" id="year" placeholder="Year" required>
+    <input type="text" id="genre" placeholder="Genre" required>
+    <button type="submit">Add Entry</button>
+  </form>
+
+  <!-- Display entries -->
+  <ul id="entryList"></ul>
+
+  <!-- Linking JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
