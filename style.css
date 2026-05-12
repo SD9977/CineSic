@@ -40,4 +40,43 @@ body {
     padding: 10px;
     border: 1px solid #ccc;
   }
+  #entryList li button {
+    padding: 5px 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  #entryList li button:hover {
+    opacity: 0.8;
+  }
+  
+  #entryList li button:nth-child(2) {
+    background: #8c908d; /* Delete button red */
+  }
+  #entryList li button {
+    padding: 5px 10px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  #entryList li button:hover {
+    opacity: 0.8;
+  }
+  #searchBar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  form input {
+    margin: 5px;
+    padding: 8px;
+  }
   
