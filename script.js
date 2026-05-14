@@ -1,78 +1,41 @@
-// Grab elements
-const form = document.getElementById('entryForm');
-const entryList = document.getElementById('entryList');
-const searchBar = document.getElementById('searchBar');
-
-// Load saved entries on page load
-document.addEventListener('DOMContentLoaded', loadEntries);
-
-// Handle form submission
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  const title = document.getElementById('title').value;
-  const year = document.getElementById('year').value;
-  const genre = document.getElementById('genre').value;
-  const language = document.getElementById('language').value;
-
-  const entry = { title, year, genre, language };
-
-  saveEntry(entry);
-  addEntryToList(entry);
-
-  form.reset();
+document.addEventListener('DOMContentLoaded', () => {
+  loadMovies();
+  loadSongs();
 });
 
-// Save entry to localStorage
-function saveEntry(entry) {
-  let entries = JSON.parse(localStorage.getItem('entries')) || [];
-  entries.push(entry);
-  localStorage.setItem('entries', JSON.stringify(entries));
+// Movies as cards
+function loadMovies() {
+  const movies = [
+    { title: "Inception", year: "2010", genre: "Sci-Fi", language: "English" },
+    { title: "RRR", year: "2022", genre: "Action", language: "Telugu" }
+  ];
+  const list = document.getElementById('movieList');
+  list.innerHTML = movies.map(m => `
+    <div class="card">
+      <p>${m.title} (${m.year}) - ${m.genre} [${m.language}]</p>
+    </div>
+  `).join('');
 }
 
-// Load entries from localStorage
-function loadEntries() {
-  entryList.innerHTML = "";
-  let entries = JSON.parse(localStorage.getItem('entries')) || [];
-  entries.forEach(entry => addEntryToList(entry));
+// Songs as cards
+function loadSongs() {
+  const songs = [
+    { title: "Shape of You", artist: "Ed Sheeran", genre: "Pop", language: "English" },
+    { title: "Tum Hi Ho", artist: "Arijit Singh", genre: "Romance", language: "Hindi" }
+  ];
+  const list = document.getElementById('songList');
+  list.innerHTML = songs.map(s => `
+    <div class="card">
+      <p>${s.title} - ${s.artist} (${s.genre}) [${s.language}]</p>
+    </div>
+  `).join('');
 }
 
-// Add entry to UI list
-function addEntryToList(entry) {
-  const li = document.createElement('li');
-  li.textContent = `${entry.title} (${entry.year}) - ${entry.genre} [${entry.language}]`;
-
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = "Delete";
-  deleteBtn.style.marginLeft = "10px";
-
-  deleteBtn.addEventListener('click', () => {
-    li.remove();
-    deleteEntry(entry);
+// Search functionality for cards
+document.getElementById('searchBar').addEventListener('input', function() {
+  const query = this.value.toLowerCase();
+  document.querySelectorAll('.card').forEach(card => {
+    const text = card.querySelector('p') ? card.querySelector('p').innerText.toLowerCase() : "";
+    card.style.display = text.includes(query) ? '' : 'none';
   });
-
-  li.appendChild(deleteBtn);
-  entryList.appendChild(li);
-}
-
-// Delete entry from localStorage
-function deleteEntry(entry) {
-  let entries = JSON.parse(localStorage.getItem('entries')) || [];
-  entries = entries.filter(e => !(e.title === entry.title && e.year === entry.year && e.genre === entry.genre && e.language === entry.language));
-  localStorage.setItem('entries', JSON.stringify(entries));
-}
-
-// Search functionality (includes language)
-searchBar.addEventListener('input', function() {
-  const query = searchBar.value.toLowerCase();
-  let entries = JSON.parse(localStorage.getItem('entries')) || [];
-
-  entryList.innerHTML = "";
-  entries
-    .filter(e =>
-      e.title.toLowerCase().includes(query) ||
-      e.genre.toLowerCase().includes(query) ||
-      e.language.toLowerCase().includes(query)
-    )
-    .forEach(entry => addEntryToList(entry));
 });

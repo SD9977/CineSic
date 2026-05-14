@@ -3,29 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CineSic</title>
+  <title>CineSic Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>CineSic</h1>
-  <p>Movie and Music Database</p>
+  <!-- Sidebar -->
+  <nav>
+    <h2>CineSic</h2>
+    <a href="index.html">Home</a>
+    <a href="pages/movie.html">Movies</a>
+    <a href="pages/song.html">Songs</a>
+    <a href="pages/artist.html">Artists</a>
+    <a href="pages/profile.html">Profile</a>
+    <a href="pages/genre.html">Genres</a>
+  </nav>
 
-  <!-- Form to add entries -->
-  <form id="entryForm">
-    <input type="text" id="title" placeholder="Title" required>
-    <input type="text" id="year" placeholder="Year" required>
-    <input type="text" id="genre" placeholder="Genre" required>
-    <input type="text" id="language" placeholder="Language" required>
-    <button type="submit">Add Entry</button>
-  </form>
+  <!-- Main content -->
+  <main>
+    <input type="text" id="searchBar" placeholder="Search movies or songs">
 
-  <!-- Search bar -->
-  <input type="text" id="searchBar" placeholder="Search by title, genre, or language">
+    <!-- Featured banner -->
+    <div class="featured">
+      <div class="featured-text">
+        <h2>The Soul Conductor</h2>
+        <p>7.8 ⭐ | English</p>
+        <button>KNOW MORE</button>
+      </div>
+      <img src="https://m.media-amazon.com/images/S/pv-target-images/5f9285ac004740ddf9255dc2dd0def6e9a3688b4b46fa63222dd2261cfc62922.jpg" alt="Tum Hi Ho">
 
-  <!-- Display entries -->
-  <ul id="entryList"></ul>
+    </div>
 
-  <!-- Linking JavaScript -->
-  <script src="script.js"></script>
+    <!-- Section: Movies -->
+    <div class="section">
+      <h3>Featured Movies</h3>
+      <div class="cards">
+        <div class="card"><img src="https://www.tallengestore.com/cdn/shop/products/Inception-LeonardoDiCaprio-ChristopherNolan-HollywoodSciFiMoviePoster_66029b94-50ae-494c-b11d-60a3d91268b5.jpg?v=1685582036"><p>Inception</p></div>
+        <div class="card"><img src="https://mir-s3-cdn-cf.behance.net/project_modules/1400/c7d5e4140074961.623b147c53ca8.jpg"><p>RRR</p></div>
+        <div class="card"><img src="https://m.media-amazon.com/images/M/MV5BM2M0YmIxNzItOWI4My00MmQzLWE0NGYtZTM3NjllNjIwZjc5XkEyXkFqcGc@._V1_.jpg"><p>KGF Chapter 1</p></div>
+      </div>
+    </div>
+
+    <!-- Section: Songs -->
+    <div class="section">
+      <h3>Featured Songs</h3>
+      <div id="movieList" class="section"></div>
+      <div id="songList" class="section"></div>
+      <div class="cards">
+        <div class="card"><img src="https://i1.sndcdn.com/artworks-000205276174-rkz33n-t500x500.jpg"><p>Shape of You</p></div>
+        <div class="card"><img src="https://images.genius.com/d7a02693d69d1c65e4b47de07989900a.300x300x1.jpg"><p>Tum Hi Ho</p></div>
+        <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Hanuman_singing.jpg"><p>Hanuman Chalisa</p></div>
+      </div>
+    </div>
+  </main>
 </body>
 </html>
