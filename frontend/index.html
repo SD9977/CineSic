@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cinesic — Cinema & Music Universe</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --cinema:#e50914;
+    --music:#1db954;
+    --gold:#f5c518;
+    --bg:#080808;
+    --surface:#111111;
+    --surface2:#1a1a1a;
+    --border:#2a2a2a;
+    --text:#f0f0f0;
+    --muted:#888;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+
+  /* ── NAVBAR ── */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background .3s;}
+  nav.scrolled{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--cinema),var(--music));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .nav-links{display:flex;gap:32px;align-items:center;}
+  .nav-links a{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none;letter-spacing:.5px;transition:color .2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);}
+  .nav-search{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;}
+  .nav-search input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:180px;font-family:'DM Sans',sans-serif;}
+  .nav-search input::placeholder{color:var(--muted);}
+
+  /* ── HERO ── */
+  .hero{position:relative;height:100vh;min-height:600px;display:flex;align-items:flex-end;padding:0 60px 80px;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#0d0d1a 50%,#0a0a0a 100%);}
+  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3;}
+  .hero-glow-red{position:absolute;top:-20%;right:5%;width:600px;height:600px;background:radial-gradient(circle,rgba(229,9,20,.18) 0%,transparent 70%);pointer-events:none;}
+  .hero-glow-green{position:absolute;bottom:-10%;left:10%;width:500px;height:500px;background:radial-gradient(circle,rgba(29,185,84,.12) 0%,transparent 70%);pointer-events:none;}
+
+  .hero-floating{position:absolute;right:60px;top:50%;transform:translateY(-50%);display:grid;grid-template-columns:1fr 1fr;gap:16px;opacity:.9;}
+  .hero-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;width:160px;animation:floatCard 4s ease-in-out infinite;}
+  .hero-card:nth-child(2){animation-delay:.8s;}
+  .hero-card:nth-child(3){animation-delay:1.6s;}
+  .hero-card:nth-child(4){animation-delay:2.4s;}
+  @keyframes floatCard{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .hero-card .card-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .hero-card .card-val{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text);line-height:1;}
+  .hero-card .card-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+  .hero-card.red .card-val{color:var(--cinema);}
+  .hero-card.green .card-val{color:var(--music);}
+  .hero-card.gold .card-val{color:var(--gold);}
+
+  .hero-content{position:relative;z-index:2;max-width:680px;}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(229,9,20,.1);border:1px solid rgba(229,9,20,.3);border-radius:100px;padding:6px 14px;margin-bottom:24px;}
+  .hero-eyebrow span{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cinema);font-weight:600;}
+  .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--cinema);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,8vw,120px);line-height:.95;letter-spacing:2px;margin-bottom:20px;}
+  .hero-title .line1{display:block;color:var(--text);}
+  .hero-title .line2{display:block;background:linear-gradient(90deg,var(--cinema),#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-title .line3{display:block;background:linear-gradient(90deg,var(--music),#69e89a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:480px;margin-bottom:40px;}
+  .hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
+  .btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--cinema);color:#fff;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:.5px;transition:all .2s;border:none;cursor:pointer;}
+  .btn-primary:hover{background:#ff1a1a;transform:translateY(-2px);}
+  .btn-secondary{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--text);padding:14px 28px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:.5px;border:1px solid var(--border);transition:all .2s;cursor:pointer;}
+  .btn-secondary:hover{background:var(--surface2);border-color:var(--music);color:var(--music);}
+  .hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
+  .scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,transparent,var(--cinema));animation:scrollLine 2s ease-in-out infinite;}
+  @keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+  /* ── STATS BAR ── */
+  .stats-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 60px;display:flex;align-items:center;gap:0;overflow:hidden;}
+  .stat-item{flex:1;text-align:center;padding:0 20px;border-right:1px solid var(--border);}
+  .stat-item:last-child{border-right:none;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+  .stat-num.red{color:var(--cinema);}
+  .stat-num.green{color:var(--music);}
+  .stat-num.gold{color:var(--gold);}
+  .stat-num.white{color:var(--text);}
+  .stat-label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;}
+
+  /* ── SECTION ── */
+  section{padding:60px;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--text);}
+  .section-title span{color:var(--cinema);}
+  .section-title.music span{color:var(--music);}
+  .see-all{font-size:13px;color:var(--muted);text-decoration:none;letter-spacing:.5px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+  .see-all:hover{color:var(--text);}
+
+  /* ── MOVIE CARDS ── */
+  .movie-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
+  .movie-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative;group;}
+  .movie-card:hover{transform:translateY(-6px);border-color:rgba(229,9,20,.4);box-shadow:0 20px 40px rgba(0,0,0,.6);}
+  .movie-thumb{width:100%;aspect-ratio:2/3;background:var(--surface2);position:relative;overflow:hidden;}
+  .movie-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:48px;position:relative;}
+  .movie-thumb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,transparent 50%);}
+  .movie-thumb-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:600;color:var(--gold);}
+  .verdict-badge{position:absolute;bottom:10px;left:10px;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+  .verdict-badge.blockbuster{background:rgba(245,197,24,.15);color:var(--gold);border:1px solid rgba(245,197,24,.3);}
+  .verdict-badge.hit{background:rgba(29,185,84,.15);color:var(--music);border:1px solid rgba(29,185,84,.3);}
+  .verdict-badge.flop{background:rgba(229,9,20,.15);color:var(--cinema);border:1px solid rgba(229,9,20,.3);}
+  .movie-info{padding:14px;}
+  .movie-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .movie-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+  .imdb-score{color:var(--gold);font-weight:700;font-family:'DM Mono',monospace;}
+  .dot-sep{width:3px;height:3px;border-radius:50%;background:var(--border);}
+
+  /* ── ALBUM CARDS ── */
+  .album-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;}
+  .album-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;padding:16px;}
+  .album-card:hover{transform:translateY(-4px);border-color:rgba(29,185,84,.4);box-shadow:0 16px 32px rgba(0,0,0,.5);}
+  .album-art{width:100%;aspect-ratio:1;background:var(--surface2);border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;overflow:hidden;}
+  .album-art::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(29,185,84,.1),transparent);}
+  .album-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .album-meta{font-size:11px;color:var(--muted);}
+  .album-streams{font-family:'DM Mono',monospace;font-size:11px;color:var(--music);margin-top:6px;}
+
+  /* ── HIGHLIGHT STRIP ── */
+  .highlight-strip{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 60px 60px;}
+  .highlight-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;}
+  .highlight-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .highlight-card.cinema::before{background:linear-gradient(90deg,var(--cinema),#ff6b6b);}
+  .highlight-card.music::before{background:linear-gradient(90deg,var(--music),#69e89a);}
+  .hl-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .hl-title{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;margin-bottom:8px;}
+  .highlight-card.cinema .hl-title{color:var(--cinema);}
+  .highlight-card.music .hl-title{color:var(--music);}
+  .hl-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+  .hl-stats{display:flex;gap:24px;}
+  .hl-stat{text-align:center;}
+  .hl-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;}
+  .hl-stat-key{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  .hl-glyph{position:absolute;right:24px;top:24px;font-size:64px;opacity:.08;}
+
+  /* ── TRENDING TABLE ── */
+  .trending-table{width:100%;border-collapse:collapse;}
+  .trending-table th{text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--border);}
+  .trending-table td{padding:14px 16px;border-bottom:1px solid rgba(42,42,42,.5);font-size:13px;}
+  .trending-table tr:hover td{background:var(--surface2);}
+  .rank-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--muted);width:48px;}
+  .rank-num.top3{color:var(--gold);}
+  .trend-title{font-weight:600;color:var(--text);}
+  .trend-dir{font-size:12px;color:var(--muted);}
+  .trend-gross{font-family:'DM Mono',monospace;font-size:12px;color:var(--music);}
+  .trend-rating{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);}
+
+  /* ── FOOTER ── */
+  footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 60px;display:flex;align-items:center;justify-content:space-between;}
+  .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;background:linear-gradient(135deg,var(--cinema),var(--music));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .footer-links{display:flex;gap:24px;}
+  .footer-links a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s;}
+  .footer-links a:hover{color:var(--text);}
+  .footer-copy{font-size:12px;color:var(--muted);}
+
+  /* ── GENRE PILLS ── */
+  .genre-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+  .genre-pill{padding:8px 18px;border-radius:100px;font-size:12px;font-weight:500;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+  .genre-pill:hover,.genre-pill.active{background:var(--cinema);border-color:var(--cinema);color:#fff;}
+  .genre-pill.music-pill:hover,.genre-pill.music-pill.active{background:var(--music);border-color:var(--music);}
+
+  /* ── LOADING SKELETON ── */
+  .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
+  @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--music);border-radius:10px;padding:14px 20px;font-size:13px;color:var(--text);z-index:1000;transform:translateX(120%);transition:transform .3s;display:flex;align-items:center;gap:10px;}
+  .toast.show{transform:translateX(0);}
+  .toast-dot{width:8px;height:8px;border-radius:50%;background:var(--music);}
+
+  /* ── SEARCH RESULTS DROPDOWN ── */
+  .search-results{position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;z-index:200;display:none;max-height:320px;overflow-y:auto;}
+  .search-results.open{display:block;}
+  .search-item{padding:12px 16px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);transition:background .15s;}
+  .search-item:hover{background:var(--surface);}
+  .search-item-title{color:var(--text);font-weight:500;}
+  .search-item-sub{color:var(--muted);font-size:11px;margin-top:2px;}
+  .search-wrapper{position:relative;}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .hero-floating{display:none;}
+    .hero{padding:0 24px 60px;}
+    section{padding:40px 24px;}
+    .stats-bar{padding:20px 24px;}
+    .highlight-strip{grid-template-columns:1fr;padding:0 24px 40px;}
+    nav{padding:0 24px;}
+    .hero-title{font-size:56px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav id="navbar">
+  <a class="logo" href="index.html">CINESIC</a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="movies.html">Movies</a>
+    <a href="music.html">Music</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="query-lab.html">Query Lab</a>
+  </div>
+  <div class="search-wrapper">
+    <div class="nav-search">
+      <svg width="14" height="14" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search movies, music, people…"/>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" style="padding-top:0">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-glow-red"></div>
+  <div class="hero-glow-green"></div>
+
+  <!-- floating stat cards -->
+  <div class="hero-floating">
+    <div class="hero-card red">
+      <div class="card-label">Top Grossing</div>
+      <div class="card-val">$2.8B</div>
+      <div class="card-sub">Avengers: Endgame</div>
+    </div>
+    <div class="hero-card green">
+      <div class="card-label">Most Streamed</div>
+      <div class="card-val">1.6B</div>
+      <div class="card-sub">Pushpa 2 streams</div>
+    </div>
+    <div class="hero-card gold">
+      <div class="card-label">Highest Rated</div>
+      <div class="card-val">9.3</div>
+      <div class="card-sub">Shawshank / Spirited Away</div>
+    </div>
+    <div class="hero-card">
+      <div class="card-label">Awards Won</div>
+      <div class="card-val" style="color:#a78bfa">847</div>
+      <div class="card-sub">Across all films</div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-dot"></div>
+      <span>Cinema + Music Database</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="line1">THE</span>
+      <span class="line2">CINEMA</span>
+      <span class="line3">UNIVERSE</span>
+    </h1>
+    <p class="hero-sub">150+ films. 83 albums. 600+ tracks. Every director, composer, actor and award — all connected in one living database.</p>
+    <div class="hero-btns">
+      <a href="movies.html" class="btn-primary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg>
+        Browse Movies
+      </a>
+      <a href="analytics.html" class="btn-secondary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        View Analytics
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<!-- ── STATS BAR ── -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num red" id="sMovies">0</div>
+    <div class="stat-label">Films Indexed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num green" id="sAlbums">0</div>
+    <div class="stat-label">Albums</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num gold" id="sTracks">0</div>
+    <div class="stat-label">Tracks</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num white" id="sPersons">0</div>
+    <div class="stat-label">Artists & Filmmakers</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" style="color:#a78bfa" id="sGross">$0</div>
+    <div class="stat-label">Total Worldwide Gross</div>
+  </div>
+</div>
+
+<!-- ── TRENDING MOVIES ── -->
+<section>
+  <div class="section-header">
+    <div class="section-title">TRENDING <span>CINEMA</span></div>
+    <a href="movies.html" class="see-all">View all movies →</a>
+  </div>
+
+  <div class="genre-row" id="genrePills"></div>
+
+  <div class="movie-row" id="movieGrid">
+    <!-- skeleton -->
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:2/3;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:2/3;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:2/3;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:2/3;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:2/3;" class="skeleton"></div>
+  </div>
+</section>
+
+<!-- ── HIGHLIGHT STRIP ── -->
+<div class="highlight-strip">
+  <div class="highlight-card cinema">
+    <div class="hl-glyph">🎬</div>
+    <div class="hl-label">Box Office Record</div>
+    <div class="hl-title">AVENGERS ENDGAME</div>
+    <div class="hl-sub">The highest-grossing film of all time. 2019. Marvel Studios. Directed by the Russo Brothers.</div>
+    <div class="hl-stats">
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--cinema)">$2.8B</div>
+        <div class="hl-stat-key">Worldwide</div>
+      </div>
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--gold)">8.4</div>
+        <div class="hl-stat-key">IMDb</div>
+      </div>
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--music)">94%</div>
+        <div class="hl-stat-key">RT Score</div>
+      </div>
+    </div>
+  </div>
+  <div class="highlight-card music">
+    <div class="hl-glyph">🎵</div>
+    <div class="hl-label">Most Streamed Soundtrack</div>
+    <div class="hl-title">PUSHPA 2 OST</div>
+    <div class="hl-sub">Thaman S composed a soundtrack that broke every streaming record. 1.6 Billion Spotify streams and counting.</div>
+    <div class="hl-stats">
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--music)">1.6B</div>
+        <div class="hl-stat-key">Streams</div>
+      </div>
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--gold)">8.4</div>
+        <div class="hl-stat-key">Rating</div>
+      </div>
+      <div class="hl-stat">
+        <div class="hl-stat-val" style="color:var(--cinema)">10</div>
+        <div class="hl-stat-key">Tracks</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOP ALBUMS ── -->
+<section>
+  <div class="section-header">
+    <div class="section-title music">TOP <span>SOUNDTRACKS</span></div>
+    <a href="music.html" class="see-all">View all albums →</a>
+  </div>
+  <div class="album-row" id="albumGrid">
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+    <div style="background:var(--surface);border-radius:12px;aspect-ratio:1;" class="skeleton"></div>
+  </div>
+</section>
+
+<!-- ── TOP BOX OFFICE TABLE ── -->
+<section>
+  <div class="section-header">
+    <div class="section-title">ALL-TIME BOX <span>OFFICE</span></div>
+    <a href="analytics.html" class="see-all">Full analytics →</a>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+    <table class="trending-table" id="boTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Director</th>
+          <th>Year</th>
+          <th>Worldwide Gross</th>
+          <th>ROI %</th>
+          <th>IMDb</th>
+        </tr>
+      </thead>
+      <tbody id="boBody">
+        <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px;">Loading data…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">CINESIC</div>
+  <div class="footer-links">
+    <a href="movies.html">Movies</a>
+    <a href="music.html">Music</a>
+    <a href="analytics.html">Analytics</a>
+    <a href="query-lab.html">Query Lab</a>
+  </div>
+  <div class="footer-copy">NIE Mysuru · DBMS Project · IS Batch C 2024</div>
+</footer>
+
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg">Connected to database</span>
+</div>
+
+<script>
+// ── CONFIG ──
+const API = '/cinesic/database/api';
+const USE_MOCK = false; // ← set FALSE when XAMPP is running
+
+// ── MOCK DATA (works without DB) ──
+const MOCK = {
+  movies:[
+    {movie_id:45,title:'RRR',release_year:2022,imdb_rating:8.0,director_name:'SS Rajamouli',worldwide_gross_usd:175000000,verdict:'Blockbuster',runtime_minutes:187,emoji:'🔥'},
+    {movie_id:44,title:'KGF Chapter 2',release_year:2022,imdb_rating:8.2,director_name:'Prashanth Neel',worldwide_gross_usd:170000000,verdict:'Blockbuster',runtime_minutes:168,emoji:'⚔️'},
+    {movie_id:67,title:'Oppenheimer',release_year:2023,imdb_rating:8.4,director_name:'Christopher Nolan',worldwide_gross_usd:952000000,verdict:'Blockbuster',runtime_minutes:180,emoji:'💥'},
+    {movie_id:47,title:'Pushpa 2: The Rule',release_year:2024,imdb_rating:7.8,director_name:'Sukumar',worldwide_gross_usd:240000000,verdict:'Blockbuster',runtime_minutes:190,emoji:'🌹'},
+    {movie_id:62,title:'The Dark Knight',release_year:2008,imdb_rating:9.0,director_name:'Christopher Nolan',worldwide_gross_usd:1008858000,verdict:'Blockbuster',runtime_minutes:152,emoji:'🦇'},
+    {movie_id:68,title:'Avengers: Endgame',release_year:2019,imdb_rating:8.4,director_name:'Russo Brothers',worldwide_gross_usd:2797796000,verdict:'Blockbuster',runtime_minutes:181,emoji:'⚡'},
+    {movie_id:1,title:'Dangal',release_year:2016,imdb_rating:8.3,director_name:'Nitesh Tiwari',worldwide_gross_usd:292000000,verdict:'Blockbuster',runtime_minutes:161,emoji:'🏅'},
+    {movie_id:3,title:'3 Idiots',release_year:2009,imdb_rating:8.4,director_name:'Rajkumar Hirani',worldwide_gross_usd:62000000,verdict:'Blockbuster',runtime_minutes:170,emoji:'🎓'},
+    {movie_id:61,title:'Inception',release_year:2010,imdb_rating:8.8,director_name:'Christopher Nolan',worldwide_gross_usd:836600000,verdict:'Blockbuster',runtime_minutes:148,emoji:'🌀'},
+    {movie_id:121,title:'Kantara',release_year:2022,imdb_rating:8.5,director_name:'Rishab Shetty',worldwide_gross_usd:35000000,verdict:'Blockbuster',runtime_minutes:150,emoji:'🐗'},
+  ],
+  albums:[
+    {album_id:35,album_name:'RRR OST',composer_name:'A.R. Rahman',spotify_streams:1400000000,movie_title:'RRR',emoji:'🎶',cinesic_music_rating:9.2},
+    {album_id:37,album_name:'Pushpa 2 OST',composer_name:'Thaman S',spotify_streams:1600000000,movie_title:'Pushpa 2',emoji:'🌺',cinesic_music_rating:8.4},
+    {album_id:57,album_name:'Interstellar OST',composer_name:'Hans Zimmer',spotify_streams:980000000,movie_title:'Interstellar',emoji:'🪐',cinesic_music_rating:9.5},
+    {album_id:10,album_name:'Rockstar',composer_name:'A.R. Rahman',spotify_streams:780000000,movie_title:'Rockstar',emoji:'🎸',cinesic_music_rating:9.1},
+    {album_id:34,album_name:'KGF Chapter 2 OST',composer_name:'Ravi Basrur',spotify_streams:1200000000,movie_title:'KGF Ch2',emoji:'🪙',cinesic_music_rating:8.7},
+    {album_id:6,album_name:'DDLJ',composer_name:'Jatin-Lalit',spotify_streams:920000000,movie_title:'DDLJ',emoji:'🌾',cinesic_music_rating:9.1},
+  ],
+  boxoffice:[
+    {rank:1,title:'Avengers: Endgame',director:'Russo Brothers',year:2019,gross:'$2.80B',roi:717,imdb:8.4},
+    {rank:2,title:'Avatar',director:'James Cameron',year:2009,gross:'$2.85B',roi:1147,imdb:7.9},
+    {rank:3,title:'Avatar: The Way of Water',director:'James Cameron',year:2022,gross:'$2.33B',roi:593,imdb:7.6},
+    {rank:4,title:'Titanic',director:'James Cameron',year:1997,gross:'$2.20B',roi:1036,imdb:7.9},
+    {rank:5,title:'Avengers: Infinity War',director:'Russo Brothers',year:2018,gross:'$2.05B',roi:558,imdb:8.4},
+    {rank:6,title:'Spider-Man: No Way Home',director:'Jon Watts',year:2021,gross:'$1.89B',roi:886,imdb:8.2},
+    {rank:7,title:'The Dark Knight',director:'Christopher Nolan',year:2008,gross:'$1.01B',roi:480,imdb:9.0},
+    {rank:8,title:'Top Gun: Maverick',director:'Joseph Kosinski',year:2022,gross:'$1.49B',roi:817,imdb:8.3},
+    {rank:9,title:'Black Panther',director:'Ryan Coogler',year:2018,gross:'$1.35B',roi:605,imdb:7.3},
+    {rank:10,title:'Baahubali 2',director:'SS Rajamouli',year:2017,gross:'$243M',roi:619,imdb:8.2},
+  ]
+};
+
+const GENRES = ['All','Action','Drama','Romance','Comedy','Thriller','Sci-Fi','Fantasy','Biographical','Horror','Animation'];
+const EMOJIS_BY_GENRE = {Action:'⚔️',Drama:'🎭',Romance:'💕',Comedy:'😂',Thriller:'🔪','Sci-Fi':'🚀',Fantasy:'✨',Biographical:'📚',Horror:'👻',Animation:'🎨'};
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>20);
+});
+
+// ── COUNTER ANIMATION ──
+function animateCount(el,target,prefix='',suffix='',isFloat=false){
+  const duration=1800,steps=60;
+  let current=0;
+  const increment=target/steps;
+  const timer=setInterval(()=>{
+    current=Math.min(current+increment,target);
+    if(isFloat) el.textContent=prefix+current.toFixed(1)+suffix;
+    else el.textContent=prefix+Math.floor(current).toLocaleString()+suffix;
+    if(current>=target) clearInterval(timer);
+  },duration/steps);
+}
+
+function initStats(){
+  animateCount(document.getElementById('sMovies'),150);
+  animateCount(document.getElementById('sAlbums'),83);
+  animateCount(document.getElementById('sTracks'),600,'+');
+  animateCount(document.getElementById('sPersons'),100);
+  document.getElementById('sGross').textContent='$28.5B';
+}
+
+// ── GENRE PILLS ──
+function renderGenrePills(active='All'){
+  const container=document.getElementById('genrePills');
+  container.innerHTML=GENRES.map(g=>`
+    <div class="genre-pill ${g===active?'active':''}" onclick="filterMovies('${g}')">${g}</div>
+  `).join('');
+}
+
+// ── VERDICT COLOR ──
+function verdictClass(v){
+  if(!v) return '';
+  const vl=v.toLowerCase();
+  if(vl.includes('blockbuster')||vl.includes('super hit')) return 'blockbuster';
+  if(vl.includes('hit')||vl.includes('average')) return 'hit';
+  return 'flop';
+}
+
+// ── RENDER MOVIES ──
+function renderMovies(movies){
+  const grid=document.getElementById('movieGrid');
+  if(!movies||!movies.length){
+    grid.innerHTML='<div style="color:var(--muted);grid-column:1/-1;text-align:center;padding:40px;">No movies found</div>';
+    return;
+  }
+  grid.innerHTML=movies.map(m=>`
+    <div class="movie-card" onclick="goMovie(${m.movie_id})">
+      <div class="movie-thumb">
+        <div class="movie-thumb-inner" style="background:linear-gradient(135deg,${randomColor(m.movie_id)}22,${randomColor(m.movie_id+10)}33);">
+          <span style="font-size:52px;z-index:1;">${m.emoji||'🎬'}</span>
+          <div class="movie-thumb-overlay"></div>
+        </div>
+        <div class="movie-thumb-badge">★ ${m.imdb_rating||'?'}</div>
+        <div class="verdict-badge ${verdictClass(m.verdict)}">${m.verdict||''}</div>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title" title="${m.title}">${m.title}</div>
+        <div class="movie-meta">
+          <span class="imdb-score">★ ${m.imdb_rating||'?'}</span>
+          <span class="dot-sep"></span>
+          <span>${m.release_year}</span>
+          <span class="dot-sep"></span>
+          <span>${m.runtime_minutes||'?'} min</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${m.director_name||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function randomColor(seed){
+  const colors=['#e50914','#1db954','#f5c518','#8b5cf6','#06b6d4','#f97316','#ec4899'];
+  return colors[seed%colors.length];
+}
+
+function goMovie(id){
+  window.location.href=`movie-detail.html?id=${id}`;
+}
+
+// ── RENDER ALBUMS ──
+function renderAlbums(albums){
+  const grid=document.getElementById('albumGrid');
+  grid.innerHTML=albums.map(a=>`
+    <div class="album-card" onclick="window.location.href='music.html?album=${a.album_id}'">
+      <div class="album-art">
+        <span>${a.emoji||'🎵'}</span>
+      </div>
+      <div class="album-title" title="${a.album_name}">${a.album_name}</div>
+      <div class="album-meta">${a.composer_name||''}</div>
+      <div class="album-meta" style="margin-top:2px;font-size:10px;">${a.movie_title||'Standalone'}</div>
+      <div class="album-streams">${fmtNum(a.spotify_streams)} streams</div>
+    </div>
+  `).join('');
+}
+
+function fmtNum(n){
+  if(!n) return '—';
+  if(n>=1000000000) return (n/1000000000).toFixed(1)+'B';
+  if(n>=1000000) return (n/1000000).toFixed(0)+'M';
+  return n.toLocaleString();
+}
+
+// ── RENDER BOX OFFICE TABLE ──
+function renderBOTable(rows){
+  const body=document.getElementById('boBody');
+  body.innerHTML=rows.map((r,i)=>`
+    <tr>
+      <td><span class="rank-num ${i<3?'top3':''}">${r.rank||i+1}</span></td>
+      <td>
+        <div class="trend-title">${r.title}</div>
+        <div class="trend-dir">${r.director||''}</div>
+      </td>
+      <td class="trend-dir">${r.director||r.director_name||''}</td>
+      <td class="trend-dir">${r.year||r.release_year||''}</td>
+      <td class="trend-gross">${r.gross||fmtUSD(r.worldwide_gross_usd)}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:#a78bfa;">${r.roi||r.roi_pct||'—'}%</td>
+      <td class="trend-rating">★ ${r.imdb||r.imdb_rating||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+function fmtUSD(n){
+  if(!n) return '—';
+  if(n>=1000000000) return '$'+(n/1000000000).toFixed(2)+'B';
+  if(n>=1000000) return '$'+(n/1000000).toFixed(0)+'M';
+  return '$'+n.toLocaleString();
+}
+
+// ── FILTER MOVIES ──
+let allMovies=[];
+function filterMovies(genre){
+  renderGenrePills(genre);
+  if(genre==='All'){ renderMovies(allMovies); return; }
+  const filtered=allMovies.filter(m=>
+    (m.genres&&m.genres.includes(genre))||
+    (m.genre_name&&m.genre_name.includes(genre))||
+    Math.random()>.5 // mock fallback
+  );
+  renderMovies(filtered.length?filtered:allMovies.slice(0,5));
+}
+
+// ── SEARCH ──
+document.getElementById('searchInput').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  const results=document.getElementById('searchResults');
+  if(q.length<2){ results.classList.remove('open'); return; }
+  const hits=allMovies.filter(m=>m.title.toLowerCase().includes(q)).slice(0,6);
+  if(!hits.length){ results.classList.remove('open'); return; }
+  results.innerHTML=hits.map(m=>`
+    <div class="search-item" onclick="goMovie(${m.movie_id})">
+      <div class="search-item-title">${m.title}</div>
+      <div class="search-item-sub">${m.release_year} · ${m.director_name||''} · ★ ${m.imdb_rating}</div>
+    </div>
+  `).join('');
+  results.classList.add('open');
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-wrapper'))
+    document.getElementById('searchResults').classList.remove('open');
+});
+
+// ── LOAD DATA ──
+async function loadData(){
+  if(USE_MOCK){
+    allMovies=MOCK.movies;
+    renderMovies(MOCK.movies);
+    renderAlbums(MOCK.albums);
+    renderBOTable(MOCK.boxoffice);
+    renderGenrePills();
+    showToast('Running on mock data — connect XAMPP for live DB');
+    return;
+  }
+  // Live API calls
+  try{
+    const [movRes,albRes,boRes]=await Promise.all([
+      fetch(`${API}/movies.php?limit=10&sort=imdb_rating`),
+      fetch(`${API}/music.php?limit=6&sort=spotify_streams`),
+      fetch(`${API}/analytics.php?type=boxoffice_top&limit=10`)
+    ]);
+    const [movData,albData,boData]=await Promise.all([movRes.json(),albRes.json(),boRes.json()]);
+    allMovies=movData.data||[];
+    renderMovies(allMovies);
+    renderAlbums(albData.data||[]);
+    renderBOTable(boData.data||[]);
+    renderGenrePills();
+    showToast('✓ Connected to Cinesic database');
+  }catch(err){
+    console.error(err);
+    allMovies=MOCK.movies;
+    renderMovies(MOCK.movies);
+    renderAlbums(MOCK.albums);
+    renderBOTable(MOCK.boxoffice);
+    renderGenrePills();
+    showToast('DB offline — showing mock data');
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded',()=>{
+  initStats();
+  loadData();
+});
+</script>
+</body>
+</html>
