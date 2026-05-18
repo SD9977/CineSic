@@ -1,32 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Artists</title>
-  <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Artists — CineSound</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Page-specific overrides ── */
+    .page-hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #0d1a0a 100%);
+      padding: 80px 0 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(180,130,255,0.12) 0%, transparent 70%);
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem,6vw,5rem); color: #e8d5ff; letter-spacing: -1px; position: relative; }
+    .page-hero p  { color: #9a85b3; font-size: 1.1rem; margin-top: 10px; position: relative; }
+ 
+    /* Filter bar */
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; padding: 36px 5% 24px; }
+    .filter-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #ccc; padding: 8px 22px; border-radius: 999px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: .85rem; letter-spacing: .5px; transition: all .25s; }
+    .filter-btn:hover, .filter-btn.active { background: #b47fff; border-color: #b47fff; color: #0a0a0f; font-weight: 600; }
+ 
+    /* Search */
+    .search-wrap { display: flex; justify-content: center; padding: 0 5% 40px; }
+    .search-wrap input { width: 100%; max-width: 500px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15); color: #eee; padding: 12px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color .2s; }
+    .search-wrap input:focus { border-color: #b47fff; }
+    .search-wrap input::placeholder { color: #666; }
+ 
+    /* Artist grid */
+    .artists-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 28px; padding: 0 5% 80px; }
+    .artist-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform .3s, box-shadow .3s, border-color .3s; text-align: center; }
+    .artist-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(180,127,255,.2); border-color: rgba(180,127,255,.4); }
+    .artist-avatar { width: 100%; aspect-ratio: 1; object-fit: cover; background: linear-gradient(135deg, #1e0a3c, #0a1e1e); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: #b47fff; }
+    .artist-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .artist-info { padding: 18px 14px 20px; }
+    .artist-info h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #e8d5ff; margin-bottom: 4px; }
+    .artist-info .genre-tag { font-size: .75rem; color: #9a85b3; letter-spacing: .5px; text-transform: uppercase; }
+    .artist-info .stats { display: flex; justify-content: center; gap: 16px; margin-top: 12px; font-size: .78rem; color: #777; }
+    .artist-info .stats span strong { color: #b47fff; display: block; font-size: 1rem; }
+ 
+    /* Featured artist */
+    .featured-artist { margin: 0 5% 50px; background: rgba(180,127,255,.07); border: 1px solid rgba(180,127,255,.2); border-radius: 20px; padding: 40px; display: flex; gap: 40px; align-items: center; }
+    .featured-artist .avatar-big { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, #2a0a5e, #0a2e2e); display: flex; align-items: center; justify-content: center; font-size: 5rem; flex-shrink: 0; border: 3px solid #b47fff; }
+    .featured-artist .featured-info h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #e8d5ff; }
+    .featured-artist .featured-info .label { font-size: .8rem; color: #b47fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .featured-artist .featured-info p { color: #9a85b3; margin-top: 10px; font-size: .95rem; line-height: 1.6; max-width: 500px; }
+    .featured-artist .featured-stats { display: flex; gap: 28px; margin-top: 20px; }
+    .featured-artist .featured-stats .stat { text-align: center; }
+    .featured-artist .featured-stats .stat strong { display: block; font-size: 1.4rem; color: #e8d5ff; font-family: 'Playfair Display', serif; }
+    .featured-artist .featured-stats .stat span { font-size: .78rem; color: #777; text-transform: uppercase; letter-spacing: .5px; }
+    @media(max-width: 600px) { .featured-artist { flex-direction: column; text-align: center; } .featured-artist .featured-stats { justify-content: center; } }
+  </style>
 </head>
 <body>
-  <nav>
-    <h2>CineSic</h2>
-    <a href="../index.html">Home</a>
-    <a href="movie.html">Movies</a>
-    <a href="song.html">Songs</a>
-    <a href="artist.html">Artists</a>
-    <a href="profile.html">Profile</a>
-    <a href="genre.html">Genres</a>
+  <!-- NAV (shared) -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">Cine<span>Sound</span></a>
+    <ul class="nav-links">
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="series.html">Series</a></li>
+      <li><a href="songs.html">Songs</a></li>
+      <li><a href="artists.html" class="active">Artists</a></li>
+      <li><a href="person.html">People</a></li>
+      <li><a href="genre.html">Genres</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="search-icon" onclick="toggleSearch()">⌕</button>
+      <a href="profile.html" class="profile-btn">Profile</a>
+    </div>
   </nav>
-
-  <main>
+ 
+  <!-- HERO -->
+  <section class="page-hero">
     <h1>Artists</h1>
-    <div class="section">
-      <h3>Featured Artists</h3>
-      <div class="cards">
-        <div class="card"><img src="https://mn2s.com/wp-content/uploads/2024/05/Arijit-Singh.png" alt="Arijit Singh"><p>Arijit Singh</p></div>
-        <div class="card"><img src="https://cdn.britannica.com/17/249617-050-4575AB4C/Ed-Sheeran-performs-Rockefeller-Plaza-Today-Show-New-York-2023.jpg" alt="Ed Sheeran"><p>Ed Sheeran</p></div>
-        <div class="card"><img src="https://assets.mysticamusic.com/images/artist-photos/m-s-subbulakshmi.jpg" alt="M S Subbulakshmi "><p>M S Subbulakshmi</p></div>
+    <p>Explore musicians, bands, composers &amp; producers</p>
+  </section>
+ 
+  <!-- FEATURED -->
+  <div class="featured-artist">
+    <div class="avatar-big">🎸</div>
+    <div class="featured-info">
+      <div class="label">Artist of the Month</div>
+      <h2>Taylor Swift</h2>
+      <p>Singer-songwriter redefining pop and country — known for introspective lyricism, era-defining albums, and a record-breaking global fanbase.</p>
+      <div class="featured-stats">
+        <div class="stat"><strong>14</strong><span>Albums</span></div>
+        <div class="stat"><strong>240+</strong><span>Songs</span></div>
+        <div class="stat"><strong>12</strong><span>Grammys</span></div>
+        <div class="stat"><strong>2006</strong><span>Debut</span></div>
       </div>
     </div>
-  </main>
+  </div>
+ 
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <input type="text" id="artistSearch" placeholder="Search artists by name or genre…" oninput="filterArtists()" />
+  </div>
+ 
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('All',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Pop',this)">Pop</button>
+    <button class="filter-btn" onclick="setFilter('Rock',this)">Rock</button>
+    <button class="filter-btn" onclick="setFilter('Hip-Hop',this)">Hip-Hop</button>
+    <button class="filter-btn" onclick="setFilter('Classical',this)">Classical</button>
+    <button class="filter-btn" onclick="setFilter('Jazz',this)">Jazz</button>
+    <button class="filter-btn" onclick="setFilter('Electronic',this)">Electronic</button>
+    <button class="filter-btn" onclick="setFilter('R&B',this)">R&amp;B</button>
+    <button class="filter-btn" onclick="setFilter('Composer',this)">Composer</button>
+  </div>
+ 
+  <!-- GRID -->
+  <div class="artists-grid" id="artistsGrid"></div>
+ 
+  <script src="script.js"></script>
+  <script>
+    const artists = [
+      { name: "Taylor Swift",   genre: "Pop",       emoji: "🎤", albums: 14, songs: 240, debut: 2006 },
+      { name: "Kendrick Lamar", genre: "Hip-Hop",   emoji: "🎙️", albums: 6,  songs: 120, debut: 2003 },
+      { name: "Billie Eilish",  genre: "Pop",       emoji: "🌑", albums: 3,  songs: 60,  debut: 2015 },
+      { name: "Hans Zimmer",    genre: "Composer",  emoji: "🎼", albums: 90, songs: 900, debut: 1980 },
+      { name: "The Weeknd",     genre: "R&B",       emoji: "🌃", albums: 5,  songs: 130, debut: 2010 },
+      { name: "Daft Punk",      genre: "Electronic",emoji: "🤖", albums: 4,  songs: 80,  debut: 1993 },
+      { name: "Adele",          genre: "Pop",       emoji: "🎵", albums: 4,  songs: 50,  debut: 2006 },
+      { name: "Miles Davis",    genre: "Jazz",      emoji: "🎺", albums: 50, songs: 400, debut: 1945 },
+      { name: "Led Zeppelin",   genre: "Rock",      emoji: "⚡", albums: 9,  songs: 120, debut: 1968 },
+      { name: "Beethoven",      genre: "Classical", emoji: "🎹", albums: 0,  songs: 722, debut: 1782 },
+      { name: "SZA",            genre: "R&B",       emoji: "🌺", albums: 3,  songs: 75,  debut: 2012 },
+      { name: "Radiohead",      genre: "Rock",      emoji: "📻", albums: 9,  songs: 150, debut: 1985 },
+    ];
+ 
+    let activeFilter = 'All';
+ 
+    function renderArtists(list) {
+      const grid = document.getElementById('artistsGrid');
+      if (!list.length) { grid.innerHTML = '<p style="color:#666;grid-column:1/-1;text-align:center;padding:60px">No artists found.</p>'; return; }
+      grid.innerHTML = list.map(a => `
+        <div class="artist-card" onclick="window.location='person.html?name=${encodeURIComponent(a.name)}'">
+          <div class="artist-avatar">${a.emoji}</div>
+          <div class="artist-info">
+            <h3>${a.name}</h3>
+            <div class="genre-tag">${a.genre}</div>
+            <div class="stats">
+              <span><strong>${a.albums}</strong>Albums</span>
+              <span><strong>${a.songs}</strong>Songs</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+ 
+    function filterArtists() {
+      const q = document.getElementById('artistSearch').value.toLowerCase();
+      const list = artists.filter(a =>
+        (activeFilter === 'All' || a.genre === activeFilter) &&
+        (a.name.toLowerCase().includes(q) || a.genre.toLowerCase().includes(q))
+      );
+      renderArtists(list);
+    }
+ 
+    function setFilter(f, btn) {
+      activeFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterArtists();
+    }
+ 
+    renderArtists(artists);
+  </script>
 </body>
 </html>
+ 

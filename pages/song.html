@@ -1,32 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Songs</title>
-  <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Songs & Albums — CineWave</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Songs page specific ── */
+    .view-toggle {
+      display: flex; gap: 4px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .view-btn {
+      background: none; border: none; padding: 6px 10px;
+      border-radius: 5px; cursor: none;
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .view-btn.active { background: var(--bg-card); color: var(--accent-gold); }
+
+    .list-header {
+      display: grid;
+      grid-template-columns: 40px 50px 1fr 140px 80px 60px;
+      gap: 16px;
+      padding: 0 16px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 4px;
+    }
+    .list-header span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .list-header .col-duration { text-align: right; }
+
+    .album-section { margin-bottom: 56px; }
+    .album-hero {
+      display: flex; gap: 32px; align-items: flex-end;
+      padding: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .album-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--album-color, linear-gradient(135deg, #e84545 0%, #080808 70%));
+      opacity: 0.15;
+    }
+    .album-cover {
+      width: 160px; height: 160px;
+      flex-shrink: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .album-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .album-cover-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 56px;
+      background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
+    }
+    .album-info { position: relative; z-index: 1; }
+    .album-info .type-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 8px;
+    }
+    .album-info h2 {
+      font-family: var(--font-display);
+      font-size: 44px;
+      letter-spacing: 1px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .album-info .meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex; gap: 12px; align-items: center;
+    }
+    .meta-dot { color: var(--text-dim); }
+
+    /* song detail modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(8,8,8,0.85);
+      z-index: 200;
+      display: none;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      max-width: 580px; width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: fadeUp 0.3s ease;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      cursor: none;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { color: var(--text-primary); border-color: var(--border-accent); }
+    .modal h2 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .modal .modal-sub { font-size: 14px; color: var(--accent-gold); margin-bottom: 24px; font-family: var(--font-mono); letter-spacing: 2px; }
+    .modal-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .modal-field label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block; margin-bottom: 4px;
+    }
+    .modal-field p { font-size: 14px; color: var(--text-primary); }
+    .modal-field.full { grid-column: 1 / -1; }
+  </style>
 </head>
 <body>
-  <nav>
-    <h2>CineSic</h2>
-    <a href="../index.html">Home</a>
-    <a href="movie.html">Movies</a>
-    <a href="song.html">Songs</a>
-    <a href="artist.html">Artists</a>
-    <a href="profile.html">Profile</a>
-    <a href="genre.html">Genres</a>
-  </nav>
 
-  <main>
-    <h1>Songs</h1>
-    <div class="section">
-      <h3>Popular Songs</h3>
-      <div class="cards">
-        <div class="card"><img src="https://i1.sndcdn.com/artworks-000205276174-rkz33n-t500x500.jpg" alt="Shape of You"><p>Shape of You</p></div>
-        <div class="card"><img src="https://images.genius.com/d7a02693d69d1c65e4b47de07989900a.300x300x1.jpg" alt="Tum Hi Ho"><p>Tum Hi Ho</p></div>
-        <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Hanuman_singing.jpg"><p>Hanuman Chalisa</p></div>
+<!-- Navigation -->
+<nav class="navbar">
+  <a class="nav-logo" href="index.html">
+    CINEWAVE
+    <span>THE INFO ARCHIVE</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="movies.html">Movies</a></li>
+    <li><a href="songs.html">Songs</a></li>
+    <li><a href="artists.html">Artists</a></li>
+    <li><a href="genre.html">Genres</a></li>
+    <li><a href="profile.html">Profile</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-search">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="globalSearch" placeholder="Search songs, albums…" />
     </div>
+    <button class="avatar-btn">U</button>
+  </div>
+</nav>
+
+<!-- Page -->
+<main class="page-wrapper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="eyebrow">// THE SOUND ARCHIVE</div>
+    <h1>SONGS<br>&amp; ALBUMS</h1>
+    <p>Full metadata on every track, album, and release — lyrics, credits, and more.</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="songs">Songs</button>
+    <button class="filter-btn" data-filter="albums">Albums</button>
+    <div class="view-toggle" style="margin-left:auto; margin-right: 8px;">
+      <button class="view-btn active" data-view="list" title="List view">☰</button>
+      <button class="view-btn" data-view="grid" title="Grid view">⊞</button>
     </div>
-  </main>
+    <div class="search-bar">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="localSearch" placeholder="Filter…" />
+    </div>
+  </div>
+
+  <!-- Songs View (default) -->
+  <section id="songs-view">
+    <div class="section-label">
+      <span>All Tracks</span>
+      <span id="songs-count"></span>
+    </div>
+    <div class="list-header" id="list-header">
+      <span>#</span>
+      <span></span>
+      <span>Title</span>
+      <span>Album</span>
+      <span class="list-col-hide">Year</span>
+      <span class="col-duration">Duration</span>
+    </div>
+    <div id="songs-container" class="grid-list">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- Albums View (hidden by default) -->
+  <section id="albums-view" style="display:none;">
+    <div class="section-label">
+      <span>All Albums</span>
+      <span id="albums-count"></span>
+    </div>
+    <div id="albums-container" class="grid-cards">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+</main>
+
+<!-- Song Detail Modal -->
+<div class="modal-backdrop" id="songModal">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  /* ── State ─────────────────────────────────────────────── */
+  let currentFilter = 'songs';
+  let currentView   = 'list';
+  let allSongs      = [];
+  let allAlbums     = [];
+
+  /* ── Load Songs ────────────────────────────────────────── */
+  async function loadSongs(query = '') {
+    const container = document.getElementById('songs-container');
+    showLoading(container);
+    try {
+      const data = await API.songs.getAll({ search: query || undefined });
+      allSongs = data.songs || data;   // adapt to your API shape
+      renderSongs(allSongs);
+    } catch (err) {
+      showError(container, err.message);
+    }
+  }
+
+  function renderSongs(songs) {
+    const container = document.getElementById('songs-container');
+    const listHeader = document.getElementById('list-header');
+    document.getElementById('songs-count').textContent = `${songs.length} tracks`;
+
+    if (!songs.length) { showEmpty(container, 'No songs match your search.'); return; }
+
+    if (currentView === 'grid') {
+      listHeader.style.display = 'none';
+      container.className = 'grid-cards';
+      container.innerHTML = songs.map((s, i) => `
+        <div class="card" style="animation-delay:${i * 0.05}s" onclick="openSongModal(${s.song_id})">
+          <div class="card-thumb">
+            ${s.cover_url
+              ? `<img src="${s.cover_url}" alt="${s.title}" loading="lazy">`
+              : `<div class="card-thumb-placeholder">♪</div>`}
+            <div class="card-badge">${s.duration ? formatDuration(s.duration) : '--:--'}</div>
+            <div class="card-overlay">
+              <div class="card-overlay-actions">
+                <button class="overlay-btn" onclick="event.stopPropagation(); openSongModal(${s.song_id})">Details</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>${s.title}</h3>
+            <p>${s.artist_name || 'Unknown Artist'}</p>
+            <div class="card-meta">
+              <span class="tag">${s.genre || 'Unknown'}</span>
+              ${s.release_year ? `<span class="tag gold">${s.release_year}</span>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+    } else {
+      listHeader.style.display = 'grid';
+      container.className = 'grid-list';
+      container.innerHTML = songs.map((s, i) => `
+        <div class="list-row" style="animation-delay:${i * 0.035}s" onclick="openSongModal(${s.song_id})">
+          <div class="row-num">${i + 1}</div>
+          <div style="display:none" class="play-icon">▶</div>
+          <div class="row-thumb">
+            ${s.cover_url
+              ? `<img src="${s.cover_url}" alt="">`
+              : `<div class="row-thumb-placeholder">♪</div>`}
+          </div>
+          <div class="row-info">
+            <h4>${s.title}</h4>
+            <span>${s.artist_name || 'Unknown Artist'}</span>
+          </div>
+          <div class="row-album list-col-hide">${s.album_title || '—'}</div>
+          <div class="list-col-hide" style="font-size:13px;color:var(--text-dim)">${s.release_year || '—'}</div>
+          <div class="row-duration">${formatDuration(s.duration)}</div>
+        </div>`).join('');
+    }
+  }
+
+  /* ── Load Albums ───────────────────────────────────────── */
+  async function loadAlbums(query = '') {
+    const container = document.getElementById('albums-container');
+    showLoading(container);
+    try {
+      const data = await API.albums.getAll({ search: query || undefined });
+      allAlbums = data.albums || data;
+      renderAlbums(allAlbums);
+    } catch (err) {
+      showError(container, err.message);
+    }
+  }
+
+  function renderAlbums(albums) {
+    const container = document.getElementById('albums-container');
+    document.getElementById('albums-count').textContent = `${albums.length} albums`;
+    if (!albums.length) { showEmpty(container, 'No albums found.'); return; }
+
+    container.innerHTML = albums.map((a, i) => `
+      <div class="card" style="animation-delay:${i * 0.06}s">
+        <div class="card-thumb">
+          ${a.cover_url
+            ? `<img src="${a.cover_url}" alt="${a.title}" loading="lazy">`
+            : `<div class="card-thumb-placeholder">💿</div>`}
+          <div class="card-badge">${a.track_count || '?'} tracks</div>
+          <div class="card-overlay">
+            <div class="card-overlay-actions">
+              <button class="overlay-btn">View Album</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>${a.title}</h3>
+          <p>${a.artist_name || 'Various Artists'}</p>
+          <div class="card-meta">
+            <span class="tag">${a.genre || 'Unknown'}</span>
+            ${a.release_year ? `<span class="tag gold">${a.release_year}</span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Song Detail Modal ─────────────────────────────────── */
+  async function openSongModal(id) {
+    const modal    = document.getElementById('songModal');
+    const body     = document.getElementById('modalBody');
+    modal.classList.add('open');
+    body.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading</p></div>';
+
+    try {
+      const s = await API.songs.getById(id);
+      body.innerHTML = `
+        <h2>${s.title}</h2>
+        <div class="modal-sub">${s.artist_name || 'Unknown Artist'} · ${s.album_title || 'Single'}</div>
+        <div class="modal-fields">
+          <div class="modal-field">
+            <label>Duration</label>
+            <p>${formatDuration(s.duration)}</p>
+          </div>
+          <div class="modal-field">
+            <label>Release Year</label>
+            <p>${s.release_year || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>Genre</label>
+            <p>${s.genre || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>Language</label>
+            <p>${s.language || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>BPM</label>
+            <p>${s.bpm || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>Key</label>
+            <p>${s.key || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>Written By</label>
+            <p>${s.songwriter || '—'}</p>
+          </div>
+          <div class="modal-field">
+            <label>Produced By</label>
+            <p>${s.producer || '—'}</p>
+          </div>
+          ${s.lyrics_snippet ? `
+          <div class="modal-field full">
+            <label>Lyrics Snippet</label>
+            <p style="font-style:italic; color:var(--text-secondary); line-height:1.7;">${s.lyrics_snippet}</p>
+          </div>` : ''}
+          ${s.description ? `
+          <div class="modal-field full">
+            <label>About</label>
+            <p style="line-height:1.7; color:var(--text-secondary);">${s.description}</p>
+          </div>` : ''}
+        </div>`;
+    } catch (err) {
+      body.innerHTML = `<p style="color:var(--accent-red)">Failed to load: ${err.message}</p>`;
+    }
+  }
+
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('songModal').classList.remove('open');
+  });
+  document.getElementById('songModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+
+  /* ── Filter (Songs / Albums) ───────────────────────────── */
+  initFilters(filter => {
+    currentFilter = filter;
+    document.getElementById('songs-view').style.display  = filter === 'songs'  ? '' : 'none';
+    document.getElementById('albums-view').style.display = filter === 'albums' ? '' : 'none';
+    if (filter === 'albums' && !allAlbums.length) loadAlbums();
+  });
+
+  /* ── View Toggle (list / grid) ─────────────────────────── */
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentView = btn.dataset.view;
+      renderSongs(allSongs);
+    });
+  });
+
+  /* ── Search ────────────────────────────────────────────── */
+  const localSearch = debounce(q => {
+    if (currentFilter === 'songs') {
+      const filtered = allSongs.filter(s =>
+        s.title.toLowerCase().includes(q.toLowerCase()) ||
+        (s.artist_name || '').toLowerCase().includes(q.toLowerCase())
+      );
+      renderSongs(filtered);
+    } else {
+      const filtered = allAlbums.filter(a =>
+        a.title.toLowerCase().includes(q.toLowerCase()) ||
+        (a.artist_name || '').toLowerCase().includes(q.toLowerCase())
+      );
+      renderAlbums(filtered);
+    }
+  }, 250);
+
+  document.getElementById('localSearch').addEventListener('input', e => localSearch(e.target.value));
+  document.getElementById('globalSearch').addEventListener('input',
+    debounce(e => { if (e.target.value.length > 1) loadSongs(e.target.value); }, 350)
+  );
+
+  /* ── Init ──────────────────────────────────────────────── */
+  loadSongs();
+</script>
 </body>
 </html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Series — CineSound</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #0d1a2e 60%, #1a0d0a 100%);
+      padding: 80px 0 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 90% at 50% -10%, rgba(80,160,255,0.13) 0%, transparent 65%);
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem,6vw,5rem); color: #d0e8ff; position: relative; }
+    .page-hero p  { color: #7090b3; font-size: 1.1rem; margin-top: 10px; position: relative; }
+ 
+    /* Tabs */
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid rgba(255,255,255,.08); padding: 0 5%; margin-bottom: 40px; overflow-x: auto; }
+    .tab-btn { background: none; border: none; color: #777; padding: 16px 28px; font-family: 'DM Sans', sans-serif; font-size: .9rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all .2s; }
+    .tab-btn:hover { color: #ccc; }
+    .tab-btn.active { color: #50a0ff; border-bottom-color: #50a0ff; font-weight: 600; }
+ 
+    /* Sort & Search row */
+    .toolbar { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; padding: 0 5% 32px; }
+    .toolbar input { flex: 1; min-width: 200px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #eee; padding: 10px 18px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: .9rem; outline: none; transition: border-color .2s; }
+    .toolbar input:focus { border-color: #50a0ff; }
+    .toolbar input::placeholder { color: #555; }
+    .toolbar select { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #ccc; padding: 10px 16px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: .9rem; cursor: pointer; outline: none; }
+ 
+    /* Series list — wide cards */
+    .series-list { display: flex; flex-direction: column; gap: 20px; padding: 0 5% 80px; }
+    .series-card { display: grid; grid-template-columns: 90px 1fr auto; gap: 24px; align-items: center; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 24px; cursor: pointer; transition: transform .25s, box-shadow .25s, border-color .25s; }
+    .series-card:hover { transform: translateX(6px); box-shadow: 0 10px 40px rgba(80,160,255,.15); border-color: rgba(80,160,255,.35); }
+    .series-poster { width: 90px; height: 120px; border-radius: 10px; background: linear-gradient(135deg, #0a1e3c, #0a2e1e); display: flex; align-items: center; justify-content: center; font-size: 2.8rem; flex-shrink: 0; }
+    .series-body h3 { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: #d0e8ff; margin-bottom: 6px; }
+    .series-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: .78rem; color: #666; margin-bottom: 10px; }
+    .series-meta .badge { background: rgba(80,160,255,.15); color: #50a0ff; padding: 2px 10px; border-radius: 999px; font-size: .72rem; }
+    .series-body p { color: #888; font-size: .88rem; line-height: 1.6; max-width: 600px; }
+    .series-right { text-align: center; flex-shrink: 0; }
+    .series-right .rating { font-family: 'Playfair Display', serif; font-size: 2rem; color: #d0e8ff; }
+    .series-right .rating-label { font-size: .7rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .series-right .status { margin-top: 8px; font-size: .75rem; padding: 4px 12px; border-radius: 999px; }
+    .status-ongoing  { background: rgba(80,200,100,.15); color: #50c864; }
+    .status-ended    { background: rgba(200,80,80,.15);  color: #c85050; }
+    .status-upcoming { background: rgba(255,180,0,.15);  color: #ffb400; }
+    @media(max-width: 600px) { .series-card { grid-template-columns: 70px 1fr; } .series-right { display: none; } }
+ 
+    /* Season drawer */
+    .season-drawer { background: rgba(255,255,255,.03); border-top: 1px solid rgba(255,255,255,.06); padding: 16px 24px; display: none; }
+    .season-drawer.open { display: block; }
+    .season-drawer h4 { color: #50a0ff; font-family: 'DM Sans', sans-serif; font-size: .85rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+    .episodes-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .ep-chip { background: rgba(80,160,255,.1); border: 1px solid rgba(80,160,255,.2); color: #7ab8ff; padding: 6px 14px; border-radius: 8px; font-size: .8rem; cursor: default; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">Cine<span>Sound</span></a>
+    <ul class="nav-links">
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="series.html" class="active">Series</a></li>
+      <li><a href="songs.html">Songs</a></li>
+      <li><a href="artists.html">Artists</a></li>
+      <li><a href="person.html">People</a></li>
+      <li><a href="genre.html">Genres</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="search-icon" onclick="toggleSearch()">⌕</button>
+      <a href="profile.html" class="profile-btn">Profile</a>
+    </div>
+  </nav>
+ 
+  <section class="page-hero">
+    <h1>Series</h1>
+    <p>TV shows, miniseries, docuseries &amp; anime — every detail catalogued</p>
+  </section>
+ 
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab('All',this)">All</button>
+    <button class="tab-btn" onclick="setTab('Drama',this)">Drama</button>
+    <button class="tab-btn" onclick="setTab('Thriller',this)">Thriller</button>
+    <button class="tab-btn" onclick="setTab('Sci-Fi',this)">Sci-Fi</button>
+    <button class="tab-btn" onclick="setTab('Comedy',this)">Comedy</button>
+    <button class="tab-btn" onclick="setTab('Fantasy',this)">Fantasy</button>
+    <button class="tab-btn" onclick="setTab('Documentary',this)">Documentary</button>
+    <button class="tab-btn" onclick="setTab('Anime',this)">Anime</button>
+  </div>
+ 
+  <div class="toolbar">
+    <input type="text" id="seriesSearch" placeholder="Search series…" oninput="render()"/>
+    <select id="sortBy" onchange="render()">
+      <option value="rating">Sort: Rating</option>
+      <option value="year">Sort: Year</option>
+      <option value="name">Sort: Name (A–Z)</option>
+    </select>
+    <select id="statusFilter" onchange="render()">
+      <option value="All">All Status</option>
+      <option value="Ongoing">Ongoing</option>
+      <option value="Ended">Ended</option>
+      <option value="Upcoming">Upcoming</option>
+    </select>
+  </div>
+ 
+  <div class="series-list" id="seriesList"></div>
+ 
+  <script src="script.js"></script>
+  <script>
+    const seriesData = [
+      { title: "Breaking Bad",      genre: "Thriller",     emoji: "⚗️",  year: 2008, seasons: 5,  episodes: 62, rating: 9.5, status: "Ended",    creator: "Vince Gilligan",   desc: "A high school chemistry teacher turned methamphetamine manufacturer partners with a former student as their criminal empire escalates." },
+      { title: "Stranger Things",   genre: "Sci-Fi",       emoji: "🌀",  year: 2016, seasons: 4,  episodes: 42, rating: 8.7, status: "Ongoing",   creator: "Duffer Brothers",  desc: "A group of kids in Hawkins, Indiana encounter supernatural forces and secret government exploits while searching for their missing friend." },
+      { title: "Game of Thrones",   genre: "Fantasy",      emoji: "🐉",  year: 2011, seasons: 8,  episodes: 73, rating: 9.2, status: "Ended",    creator: "D.B. Weiss",       desc: "Nine noble families wage war against each other in order to gain control over the mythical land of Westeros." },
+      { title: "The Office",        genre: "Comedy",       emoji: "📋",  year: 2005, seasons: 9,  episodes: 201,rating: 9.0, status: "Ended",    creator: "Greg Daniels",     desc: "A mockumentary on a group of typical office workers where the workday consists of ego clashes, inappropriate remarks, and tedium." },
+      { title: "Planet Earth III",  genre: "Documentary",  emoji: "🌍",  year: 2023, seasons: 1,  episodes: 8,  rating: 9.4, status: "Ended",    creator: "Mike Gunton",      desc: "Sir David Attenborough explores the natural world at a pivotal moment in time, when humanity's relationship with nature is changing fast." },
+      { title: "Attack on Titan",   genre: "Anime",        emoji: "⚔️",  year: 2013, seasons: 4,  episodes: 94, rating: 9.0, status: "Ended",    creator: "Hajime Isayama",   desc: "Humanity's remnants hide behind giant walls to escape the threat of giant humanoid Titans. When the walls fall, Eren Yeager vows revenge." },
+      { title: "The Crown",         genre: "Drama",        emoji: "👑",  year: 2016, seasons: 6,  episodes: 60, rating: 8.6, status: "Ended",    creator: "Peter Morgan",     desc: "Follows the political rivalries and romance of Queen Elizabeth II's reign and the events that shaped the second half of the 20th century." },
+      { title: "Severance",         genre: "Thriller",     emoji: "🧠",  year: 2022, seasons: 2,  episodes: 19, rating: 8.7, status: "Ongoing",   creator: "Dan Erickson",     desc: "Mark leads a team of office workers whose memories have been surgically divided between their work and personal lives." },
+    ];
+ 
+    let activeTab = 'All';
+ 
+    function setTab(t, btn) {
+      activeTab = t;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+ 
+    function render() {
+      const q      = document.getElementById('seriesSearch').value.toLowerCase();
+      const sort   = document.getElementById('sortBy').value;
+      const status = document.getElementById('statusFilter').value;
+ 
+      let list = seriesData.filter(s =>
+        (activeTab === 'All' || s.genre === activeTab) &&
+        (status === 'All' || s.status === status) &&
+        (s.title.toLowerCase().includes(q) || s.creator.toLowerCase().includes(q))
+      );
+ 
+      list.sort((a,b) => sort === 'rating' ? b.rating - a.rating : sort === 'year' ? b.year - a.year : a.title.localeCompare(b.title));
+ 
+      const container = document.getElementById('seriesList');
+      if (!list.length) { container.innerHTML = '<p style="color:#555;text-align:center;padding:60px">No series found.</p>'; return; }
+ 
+      container.innerHTML = list.map((s, i) => `
+        <div>
+          <div class="series-card" onclick="toggleDrawer(${i})">
+            <div class="series-poster">${s.emoji}</div>
+            <div class="series-body">
+              <h3>${s.title}</h3>
+              <div class="series-meta">
+                <span>${s.year}</span>
+                <span class="badge">${s.genre}</span>
+                <span>${s.seasons} Seasons · ${s.episodes} Episodes</span>
+                <span>Created by ${s.creator}</span>
+              </div>
+              <p>${s.desc}</p>
+            </div>
+            <div class="series-right">
+              <div class="rating">${s.rating}</div>
+              <div class="rating-label">/ 10</div>
+              <div class="status status-${s.status.toLowerCase()}">${s.status}</div>
+            </div>
+          </div>
+          <div class="season-drawer" id="drawer-${i}">
+            <h4>Seasons</h4>
+            <div class="episodes-row">
+              ${Array.from({length: s.seasons}, (_,k) => `<div class="ep-chip">Season ${k+1}</div>`).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+ 
+    function toggleDrawer(i) {
+      const d = document.getElementById('drawer-' + i);
+      d.classList.toggle('open');
+    }
+ 
+    render();
+  </script>
+</body>
+</html>
+ 

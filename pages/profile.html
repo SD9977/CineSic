@@ -1,35 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
-  <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Genres — CineSound</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #0a1a0d 60%, #1a0a1a 100%);
+      padding: 80px 0 60px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 100% at 50% -20%, rgba(100,255,120,.08) 0%, transparent 65%);
+    }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem,6vw,5rem); color: #d0ffd8; position: relative; }
+    .page-hero p  { color: #70a378; font-size: 1.1rem; margin-top: 10px; position: relative; }
+ 
+    /* Mode toggle */
+    .mode-toggle { display: flex; justify-content: center; gap: 12px; padding: 36px 0 20px; }
+    .mode-btn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #ccc; padding: 9px 26px; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: .85rem; transition: all .2s; }
+    .mode-btn.active { background: #64ff78; border-color: #64ff78; color: #0a0a0f; font-weight: 700; }
+ 
+    /* Genre grid */
+    .genres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 40px 5% 0; }
+    .genre-card {
+      border-radius: 18px; padding: 36px 28px; cursor: pointer; position: relative; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .genre-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 25px 60px rgba(0,0,0,.5); }
+    .genre-card::before { content: ''; position: absolute; inset: 0; background: inherit; filter: brightness(.6); z-index: 0; }
+    .genre-card .genre-emoji { font-size: 3.5rem; position: relative; z-index: 1; display: block; margin-bottom: 14px; }
+    .genre-card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #fff; position: relative; z-index: 1; margin-bottom: 6px; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+    .genre-card .genre-count { font-size: .82rem; color: rgba(255,255,255,.7); position: relative; z-index: 1; margin-bottom: 14px; }
+    .genre-card .genre-desc { font-size: .88rem; color: rgba(255,255,255,.6); line-height: 1.6; position: relative; z-index: 1; }
+    .genre-card .genre-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; position: relative; z-index: 1; }
+    .genre-card .genre-tags span { background: rgba(255,255,255,.15); padding: 3px 12px; border-radius: 999px; font-size: .72rem; color: rgba(255,255,255,.85); }
+ 
+    /* Genre detail panel */
+    .genre-panel { margin: 40px 5% 0; display: none; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; overflow: hidden; }
+    .genre-panel.open { display: block; }
+    .genre-panel-header { display: flex; align-items: center; gap: 20px; padding: 28px 32px; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .genre-panel-header .big-emoji { font-size: 3rem; }
+    .genre-panel-header h2 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.8rem; }
+    .genre-panel-header .close-btn { margin-left: auto; background: rgba(255,255,255,.08); border: none; color: #ccc; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+    .genre-panel-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .genre-panel-body .col { padding: 28px 32px; }
+    .genre-panel-body .col + .col { border-left: 1px solid rgba(255,255,255,.07); }
+    .genre-panel-body h4 { font-size: .75rem; letter-spacing: 2px; text-transform: uppercase; color: #64ff78; margin-bottom: 16px; }
+    .mini-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .mini-list li { display: flex; align-items: center; gap: 12px; color: #bbb; font-size: .9rem; }
+    .mini-list li .rank { color: #555; font-family: 'Playfair Display', serif; font-size: .85rem; width: 20px; }
+    .mini-list li .title { color: #eee; flex: 1; }
+    .mini-list li .score { color: #64ff78; font-size: .82rem; }
+    @media(max-width:640px){ .genre-panel-body { grid-template-columns:1fr; } .genre-panel-body .col+.col{border-left:none;border-top:1px solid rgba(255,255,255,.07);} }
+ 
+    /* Stats row */
+    .stats-row { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; padding: 50px 5% 60px; }
+    .stats-row .stat { text-align: center; }
+    .stats-row .stat .num { font-family: 'Playfair Display', serif; font-size: 3rem; color: #64ff78; }
+    .stats-row .stat .label { font-size: .8rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+  </style>
 </head>
 <body>
-  <nav>
-    <h2>CineSic</h2>
-    <a href="../index.html">Home</a>
-    <a href="movie.html">Movies</a>
-    <a href="song.html">Songs</a>
-    <a href="artist.html">Artists</a>
-    <a href="profile.html">Profile</a>
-    <a href="genre.html">Genres</a>
-  </nav>
-
-  <main>
-    <h1>Profile</h1>
-    <div class="section">
-      <h3>User Information</h3>
-      <div class="cards">
-        <div class="card">
-          <img src="https://thumbs.dreamstime.com/b/profile-placeholder-image-gray-silhouette-no-photo-profile-placeholder-image-gray-silhouette-no-photo-person-avatar-123478438.jpg" alt="User Profile">
-          <p><strong>Name:</strong> John Doe</p>
-          <p><strong>Email:</strong> johndoe@example.com</p>
-          <p><strong>Favorites:</strong> Hanuman Chalisa, Tum Hi Ho</p>
-        </div>
-      </div>
+  <nav class="navbar">
+    <a href="index.html" class="logo">Cine<span>Sound</span></a>
+    <ul class="nav-links">
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="series.html">Series</a></li>
+      <li><a href="songs.html">Songs</a></li>
+      <li><a href="artists.html">Artists</a></li>
+      <li><a href="person.html">People</a></li>
+      <li><a href="genre.html" class="active">Genres</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="search-icon" onclick="toggleSearch()">⌕</button>
+      <a href="profile.html" class="profile-btn">Profile</a>
     </div>
-  </main>
+  </nav>
+ 
+  <section class="page-hero">
+    <h1>Genres</h1>
+    <p>Browse every category across films, series &amp; music</p>
+  </section>
+ 
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('all',this)">All Genres</button>
+    <button class="mode-btn" onclick="setMode('film',this)">Film</button>
+    <button class="mode-btn" onclick="setMode('music',this)">Music</button>
+  </div>
+ 
+  <div class="genres-grid" id="genresGrid"></div>
+  <div class="genre-panel" id="genrePanel"></div>
+ 
+  <div class="stats-row">
+    <div class="stat"><div class="num">24</div><div class="label">Total Genres</div></div>
+    <div class="stat"><div class="num">3,800+</div><div class="label">Films Catalogued</div></div>
+    <div class="stat"><div class="num">18,000+</div><div class="label">Songs Indexed</div></div>
+    <div class="stat"><div class="num">900+</div><div class="label">Series Listed</div></div>
+  </div>
+ 
+  <script src="script.js"></script>
+  <script>
+    const genres = [
+      { name:"Action",      emoji:"💥", type:"film",  color:"linear-gradient(135deg,#2e1a0a,#3e0a0a)", count:"420 Films", desc:"High-octane sequences, stunts, and visceral conflict that keep you on the edge of your seat.", tags:["Blockbuster","Stunts","Combat"], topFilms:["Mad Max: Fury Road","John Wick","Die Hard","Mission Impossible"], topSongs:[] },
+      { name:"Drama",       emoji:"🎭", type:"film",  color:"linear-gradient(135deg,#0a102e,#1a0a2e)", count:"680 Films · 240 Series", desc:"Character-driven stories exploring human emotion, conflict, and the complexity of everyday life.", tags:["Character","Emotional","Realistic"], topFilms:["The Shawshank Redemption","Schindler's List","Forrest Gump"], topSongs:[] },
+      { name:"Thriller",    emoji:"🔪", type:"film",  color:"linear-gradient(135deg,#1a0a0a,#0a1a0a)", count:"310 Films", desc:"Suspense and tension built through psychological conflict, mystery, and high stakes.", tags:["Suspense","Mystery","Tension"], topFilms:["Silence of the Lambs","Gone Girl","Se7en","Parasite"], topSongs:[] },
+      { name:"Sci-Fi",      emoji:"🚀", type:"film",  color:"linear-gradient(135deg,#0a1a2e,#001428)", count:"280 Films · 120 Series", desc:"Speculative fiction exploring technology, space, time, and humanity's future possibilities.", tags:["Space","Future","AI","Time Travel"], topFilms:["Interstellar","Blade Runner 2049","2001: A Space Odyssey"], topSongs:[] },
+      { name:"Horror",      emoji:"👻", type:"film",  color:"linear-gradient(135deg,#1a0a1a,#0a0a0a)", count:"200 Films", desc:"Fear, dread and the unknown — from psychological horror to supernatural terror.", tags:["Fear","Supernatural","Psychological"], topFilms:["The Shining","Hereditary","Get Out","Us"], topSongs:[] },
+      { name:"Comedy",      emoji:"😂", type:"film",  color:"linear-gradient(135deg,#1a1a0a,#0a1a00)", count:"350 Films · 190 Series", desc:"Laughter, wit, and absurdity — from slapstick to sharp satirical commentary.", tags:["Humor","Satire","Witty"], topFilms:["The Grand Budapest Hotel","Superbad","In Bruges"], topSongs:[] },
+      { name:"Pop",         emoji:"🎤", type:"music", color:"linear-gradient(135deg,#2e0a2e,#0a001e)", count:"4,200 Songs", desc:"Catchy melodies and universal themes — the backbone of mainstream commercial music.", tags:["Catchy","Upbeat","Chart-Topping"], topFilms:[], topSongs:["Anti-Hero","Flowers","Blinding Lights","Levitating"] },
+      { name:"Hip-Hop",     emoji:"🎙️", type:"music", color:"linear-gradient(135deg,#1a1000,#0a0a00)", count:"3,100 Songs", desc:"Rhythmic vocal delivery, sampling, and lyrical storytelling rooted in urban culture.", tags:["Rap","Beats","Sampling","Lyricism"], topFilms:[], topSongs:["HUMBLE.","God's Plan","Sicko Mode","Alright"] },
+      { name:"Rock",        emoji:"🎸", type:"music", color:"linear-gradient(135deg,#1a0a00,#0a0000)", count:"5,600 Songs", desc:"Guitar-driven energy from classic to alternative — rebellious, raw, and timeless.", tags:["Guitar","Drums","Riff","Punk"], topFilms:[], topSongs:["Bohemian Rhapsody","Smells Like Teen Spirit","Hotel California"] },
+      { name:"Classical",   emoji:"🎻", type:"music", color:"linear-gradient(135deg,#0a0a1a,#00001a)", count:"2,800 Pieces", desc:"Orchestral mastery spanning centuries — from Bach to Beethoven and beyond.", tags:["Orchestral","Symphony","Opera"], topFilms:[], topSongs:["Moonlight Sonata","Clair de Lune","The Four Seasons"] },
+      { name:"Jazz",        emoji:"🎺", type:"music", color:"linear-gradient(135deg,#1a0f00,#1a0800)", count:"1,900 Tracks", desc:"Improvisational freedom, complex harmony, and a rich Afro-American heritage.", tags:["Improvisation","Swing","Blues","Bebop"], topFilms:[], topSongs:["Take Five","So What","Round Midnight"] },
+      { name:"Electronic",  emoji:"🎛️", type:"music", color:"linear-gradient(135deg,#001a2e,#00002e)", count:"3,700 Tracks", desc:"Synthesized sound design from ambient to techno — the frontier of sonic experimentation.", tags:["Synth","Beats","Ambient","Techno"], topFilms:[], topSongs:["Get Lucky","One More Time","Around the World"] },
+    ];
+ 
+    let activeMode = 'all';
+ 
+    function setMode(m, btn) {
+      activeMode = m;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      closePanel();
+      renderGenres();
+    }
+ 
+    function renderGenres() {
+      const filtered = genres.filter(g => activeMode === 'all' || g.type === activeMode);
+      document.getElementById('genresGrid').innerHTML = filtered.map((g,i) => `
+        <div class="genre-card" style="background:${g.color}" onclick="openPanel(${genres.indexOf(g)})">
+          <span class="genre-emoji">${g.emoji}</span>
+          <h3>${g.name}</h3>
+          <div class="genre-count">${g.count}</div>
+          <div class="genre-desc">${g.desc}</div>
+          <div class="genre-tags">${g.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+        </div>
+      `).join('');
+    }
+ 
+    function openPanel(idx) {
+      const g = genres[idx];
+      const panel = document.getElementById('genrePanel');
+      const topItems = g.topFilms.length ? g.topFilms : g.topSongs;
+      const listLabel = g.topFilms.length ? 'Top Films / Series' : 'Top Songs';
+      panel.innerHTML = `
+        <div class="genre-panel-header">
+          <div class="big-emoji">${g.emoji}</div>
+          <div>
+            <h2>${g.name}</h2>
+            <div style="color:#64ff78;font-size:.8rem;margin-top:4px">${g.count}</div>
+          </div>
+          <button class="close-btn" onclick="closePanel()">✕</button>
+        </div>
+        <div class="genre-panel-body">
+          <div class="col">
+            <h4>${listLabel}</h4>
+            <ul class="mini-list">
+              ${topItems.map((t,i)=>`<li><span class="rank">${i+1}.</span><span class="title">${t}</span><span class="score">★</span></li>`).join('')}
+            </ul>
+          </div>
+          <div class="col">
+            <h4>Sub-genres &amp; Tags</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">${g.tags.map(t=>`<span style="background:rgba(100,255,120,.12);border:1px solid rgba(100,255,120,.25);color:#64ff78;padding:6px 16px;border-radius:999px;font-size:.8rem">${t}</span>`).join('')}</div>
+            <p style="color:#666;margin-top:24px;font-size:.88rem;line-height:1.7">${g.desc}</p>
+          </div>
+        </div>
+      `;
+      panel.classList.add('open');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+ 
+    function closePanel() {
+      document.getElementById('genrePanel').classList.remove('open');
+    }
+ 
+    renderGenres();
+  </script>
 </body>
 </html>
+ 
